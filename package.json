@@ -1,0 +1,17 @@
+{
+  "name": "steam-trading-bot",
+  "version": "1.0.0",
+  "description": "Steam Trading Bot for trading CSGO Items",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "steam-tradeoffer-manager": "^2.11.6",
+    "steam-user": "^5.2.0",
+    "steamcommunity": "^3.48.4"
+  }
+}
