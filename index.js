@@ -1,7 +1,7 @@
 const SteamUser = require('steam-user');
 const SteamTotp = require('steam-totp');
-const dotenv = require('dotenv');
 
+const dotenv = require('dotenv');
 dotenv.config();
 
 let client = new SteamUser();
