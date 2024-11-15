@@ -4,12 +4,13 @@
   "description": "Steam Trading Bot for trading CSGO Items",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon src/bot.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "nodemon": "^3.1.7",
     "steam-totp": "^2.1.2",
     "steam-tradeoffer-manager": "^2.11.6",
     "steam-user": "^5.2.0",
