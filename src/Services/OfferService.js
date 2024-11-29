@@ -1,10 +1,12 @@
-const getItemValue = require('./MarketService');
-
+const getOfferValue = require('./MarketService');
+const createTrade = require('./TradeService');
 const logger = require('pino')()
 
 const processOffer = (offer, community) => {
-    console.log(offer);
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+
+        const trade = await createTrade(offer);
+
         if (offer.isGlitched() || offer.state === 11) {
             logger.info(`Declining offer with ID #${offer.id} because the offer is glitched`);
             declineOffer(offer, 'Offer Glitched')
@@ -15,10 +17,10 @@ const processOffer = (offer, community) => {
             declineOffer(offer, 'Try to steal items from the bot')
         }
 
-        offer.itemsToReceive.map((item) => {
-            const value = getItemValue(community, item.appid, item.market_hash_name);
-            console.log(value)
-        })
+        const offerValue = await getOfferValue(offer.itemsToReceive, community);
+        if (offerValue < 20) {
+            declineOffer(offer, 'The offer value is below €0.20')
+        }
     });
 }
 
