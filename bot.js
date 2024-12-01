@@ -67,7 +67,6 @@ client.on('friendRelationship', (steamID, relationShip) => {
 });
 
 manager.on('newOffer', (offer) => {
-    console.log(offer);
     logger.info(`Received new offer with ID #${offer.id} from user ${offer.partner.getSteamID64()}`)
     processOffer(offer, community);
 });

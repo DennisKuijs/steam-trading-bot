@@ -21,6 +21,8 @@ const processOffer = (offer, community) => {
         if (offerValue < 20) {
             declineOffer(offer, 'The offer value is below €0.20')
         }
+
+        acceptOffer(offer, community);
     });
 }
 
