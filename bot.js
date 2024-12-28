@@ -5,7 +5,8 @@ const TradeOfferManager = require('steam-tradeoffer-manager');
 const logger = require('pino')()
 const dotenv = require('dotenv');
 const addFriend = require('./src/Services/FriendService');
-const processOffer = require('./src/Services/OfferService');
+const { processOffer, createOffer } = require('./src/Services/OfferService');
+const ioClient = require('socket.io-client');
 
 dotenv.config();
 
@@ -25,6 +26,11 @@ client.logOn({
     password: process.env.STEAM_PASSWORD,
     twoFactorCode: SteamTOTP.generateAuthCode(process.env.STEAM_2FA_SHARED_SECRET)
 });
+
+const socket = ioClient.connect("http://localhost:3000");
+socket.on('trade', (trade) => {
+    createOffer(trade.user, trade.item, manager);
+})
 
 //Emits when successfully logged in to the Steam account
 client.on('loggedOn', () => {
@@ -47,7 +53,7 @@ client.on('webSession', (sessionID, cookies) => {
 });
 
 client.on('error', (error) => {
-    logger.error(`Oops.. There is an error occurred during login (${error.message})`)
+    logger.error(`Oops.. There is an error occurred during login Error: (${error.message})`)
 });
 
 // //Emits when a (friend) user sends a message to the bot 
@@ -57,16 +63,25 @@ client.chat.on('friendMessage', (message) => {
 
 //Emits when a user makes a friendrequest to the steam bot.s
 client.on('friendRelationship', (steamID, relationShip) => {
+    logger.info(`Received new friend request from SteamID ${steamID} with status ${relationShip}}`)
+
     addFriend(client, steamID, relationShip)
-    .then((personaName) => {
-        logger.info(`Succesfully added ${personaName} to your friends list.`);
+    .then(() => {
+        logger.info(`Succesfully processed friend request from SteamID ${steamID}`);
     })
     .catch((error) => {
-        logger.error(`Oops.. There is an error occurred while adding user with SteamID ${steamID} as new friend (${error.message})`)
+        logger.error(`There is an error occurred while processing the friend request from SteamID ${steamID} Error: (${error.message})`)
     })
 });
 
 manager.on('newOffer', (offer) => {
     logger.info(`Received new offer with ID #${offer.id} from user ${offer.partner.getSteamID64()}`)
-    processOffer(offer, community);
+    
+    processOffer(offer, community)
+    .then((processedOffer) => {
+        logger.info(`Succesfully processed offer with ID ${processedOffer.id}`)
+    })
+    .catch((error) => {
+        logger.error(`Oops.. There is an error occurred while processing the offer with ID ${offer.id} Error: (${error.message})`)
+    })
 });

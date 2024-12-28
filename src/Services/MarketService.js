@@ -20,7 +20,7 @@ const getOfferValue = (items, community) => {
     
         Promise.all(promises).then(result => {
             logger.info(`The total trade value is €${totalValue / 100}`);
-            resolve(result);
+            resolve(totalValue);
         })
     })
 }
